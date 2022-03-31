@@ -1,0 +1,8 @@
+.DS_Store
+.idea
+cmake-build-debug
+docs
+build
+EventOS.jdebug*
+CMakeLists.txt
+/test/assertions.txt
