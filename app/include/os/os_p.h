@@ -10,7 +10,6 @@
 #include "os/os.h"
 #include <stdint.h>
 
-#define OS_CLOCKS_PER_TICK 1000
 
 typedef struct
 {

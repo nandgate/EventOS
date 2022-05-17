@@ -24,6 +24,8 @@
 
 #include <stdint.h>
 
+#define OS_CLOCKS_PER_TICK 1000
+
 /**
  * A Context is a block of memory holding application specific state, but managed by the OS.
  *
