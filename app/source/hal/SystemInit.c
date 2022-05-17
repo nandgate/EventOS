@@ -1,5 +1,11 @@
 #include "stm32F1xx.h"
 
+uint32_t SystemCoreCLock;
+
+void SystemCoreClockUpdate(void) {
+    SystemCoreCLock = 64000000;
+}
+
 static void InitFlash(void)
 {
     // Two wait states: SYSCLK >= 48MHz
