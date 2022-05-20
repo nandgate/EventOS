@@ -7,7 +7,7 @@ os_context_t os_Do(os_action_t action, uint32_t contextSize)
 
     // allocate queue entry and add it to the queue
     os_actionEntry_t *actionEntry = os_MemAlloc(sizeof(os_actionEntry_t));
-    // TODO: Error handling for when malloc fails, NULL return- out of memory
+    while(actionEntry == NULL); // TODO: Error handling for when malloc fails, NULL return- out of memory
     os_FifoAdd(actionEntry);
 
     // Associate the action with the entry

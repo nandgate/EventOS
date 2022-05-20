@@ -17,8 +17,8 @@ void os_Subscribe(uint32_t topic, os_action_t action) {
                 }
             }
             // No slot found- ignore it (for now....)
-            // TODO: Deal with too many subscribers
-            return;
+            while(1);  // TODO: Deal with too many subscribers
+            //return;
         }
     }
 

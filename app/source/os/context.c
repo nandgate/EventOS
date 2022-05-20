@@ -12,7 +12,7 @@ os_ctx_t *os_ContextNew(uint32_t size)
     // deal with the underflow logic when size < 4. This is "good enough".
     uint32_t entrySize = sizeof(os_ctx_t) + size;
     os_ctx_t *entry = os_MemAlloc(entrySize);
-    // TODO: case where MemAlloc failed (is NUll)
+    while(entry == NULL);// TODO: case where MemAlloc failed (is NUll)
     entry->count = 1;
     entry->size = size;
     return entry;

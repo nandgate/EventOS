@@ -9,7 +9,7 @@
 #include "os/arm_p.h"
 #include "os/os.h"
 #include <stdint.h>
-
+#include <stdlib.h>
 
 typedef struct
 {

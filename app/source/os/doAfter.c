@@ -12,7 +12,7 @@ os_context_t os_DoAfter(os_action_t action, uint32_t contextSize, uint32_t ticks
 
     // allocate timer queue entry and add it to the queue
     os_tqEntry_t *tqEntry = os_MemAlloc(sizeof(os_tqEntry_t));
-    // TODO: Error handling for when malloc fails, NULL return- out of memory
+    while(tqEntry == NULL); // TODO: Error handling for when malloc fails, NULL return- out of memory
 
     tqEntry->ticks = ticks;
     tqEntry->ctx = os_ContextNew(contextSize);

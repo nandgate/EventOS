@@ -15,7 +15,7 @@ void SysTick_Handler(void)
             do {
                 // Time expired, add an entry to the FIFO of things to do
                 os_actionEntry_t *actionEntry = os_MemAlloc(sizeof(os_actionEntry_t));
-                // TODO: Error handling for when malloc fails, NULL return- out of memory
+                while(actionEntry == NULL); // TODO: Error handling for when malloc fails, NULL return- out of memory
 
                 actionEntry->action = os_tQueue->action;
                 actionEntry->ctx = os_tQueue->ctx;
