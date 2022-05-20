@@ -44,6 +44,7 @@ static void test_ZeroTicks(void)
 
     Assert_CalledOnce(os_DoWith);
     Assert_Called2(os_DoWith, test_Action, test_ctx.data);
+    Assert_NotCalled(os_ContextReuse);
 }
 
 static void test_AddToQueue(void)

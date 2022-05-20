@@ -5,7 +5,7 @@ void os_DoAfterWith(os_action_t action, os_context_t context, uint32_t ticks)
 {
     // When tick is zero no need to mess with timer mechanics, just do it now...
     if (ticks == 0) {
-        os_DoWith(action, context);
+        return os_DoWith(action, context);
     }
 
     __disable_irq();
