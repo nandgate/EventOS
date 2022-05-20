@@ -5,12 +5,16 @@
 extern uint32_t SystemCoreClock;
 void SystemCoreClockUpdate(void);
 
+#ifndef __CM_CMSIS_VERSION
+
 #ifndef __enable_irq
 #define __enable_irq() __asm volatile ("cpsie i" : : : "memory");
 #endif
 
 #ifndef __disable_irq
 #define __disable_irq() __asm volatile ("cpsid i" : : : "memory");
+#endif
+
 #endif
 
 typedef struct  // TODO: move to ARM specific file?

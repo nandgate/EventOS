@@ -35,7 +35,7 @@ static void InitTimers(void)
     RCC->APB2RSTR = RCC_APB2RSTR_TIM1RST;   // Set the reset bit
     RCC->APB2RSTR = 0;                      // Clear the reset bit
 
-    // Initialize Timers 2,3 & 4 for use
+    // Initialize Timers 2, 3 & 4 for use
     RCC->APB1ENR |= RCC_APB1ENR_TIM2EN | RCC_APB1ENR_TIM3EN | RCC_APB1ENR_TIM4EN;        // Enable clock
     RCC->APB1RSTR = RCC_APB1RSTR_TIM2RST | RCC_APB1RSTR_TIM3RST | RCC_APB1RSTR_TIM4RST; // Set the reset bit
     RCC->APB1RSTR = 0;                      // Clear the reset bit

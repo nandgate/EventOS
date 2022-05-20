@@ -8,7 +8,8 @@
 
 void SystemCoreClockUpdate(void);
 extern uint32_t SystemCoreCLock;
-
+uint64_t memTicks= 0;
+uint32_t ticks = 0;
 
 #define MAX_TIME        5000
 #define MAX_CTX_SIZE    4096
@@ -229,6 +230,19 @@ void Blinky(os_context_t context) {
     (void)context;
     led_Toggle(LED);
     os_DoAfterWith(Blinky, context, 250);
+
+    // Memory management timing report
+    memTicks += TIM1->CNT;
+    TIM1->CNT = 0;
+
+    ITM_SendStr("memticks: ");
+    ITM_SendHex((memTicks >> 32UL));
+    ITM_SendHex(memTicks & 0xFFFFFFFFUL);
+    ITM_SendChar('\n');
+
+    ITM_SendStr("ticks: ");
+    ITM_SendHex(++ticks);
+    ITM_SendChar('\n');
 }
 
 int main(void) {
