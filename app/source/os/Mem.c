@@ -1,8 +1,9 @@
-#include "stm32f1xx.h"
-
-
 #include "os/os_p.h"
 #include <stdlib.h>
+
+// NOTE: the references to TIM1 and inclusion of the STM32F1xx.h header are for memory management timing testing. They
+// are NOT required for the operation of EventOS- and should be removed in a deployed instance.
+#include "stm32f1xx.h"
 
 void os_MemInit(void)
 {
