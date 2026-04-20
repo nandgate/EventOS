@@ -6,3 +6,4 @@ build
 EventOS.jdebug*
 CMakeLists.txt
 /test/assertions.txt
+/test/runlog.txt

@@ -10,5 +10,5 @@ then
     exit 0
 fi
 
-make
-make docs
+rm -rf docs
+doxygen eventos.doxy

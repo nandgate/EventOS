@@ -1,0 +1,83 @@
+/**
+ * @file os_config.h.template
+ *
+ * Template for an application-supplied EventOS configuration header.
+ *
+ * To use:
+ *   1. Copy this file into your application tree as `os_config.h` (drop the
+ *      `.template` suffix) and place the directory on your compiler's include
+ *      path (e.g. `-Iyour_app/include`).
+ *   2. Compile with `-DOS_USE_CONFIG_H`. The OS headers will then pick up this
+ *      file instead of the built-in defaults.
+ *   3. Edit the values below for your application. Any knob you omit keeps its
+ *      built-in default. Any knob you leave here overrides the default.
+ *
+ * A `-D<KNOB>=<value>` on the compile line still wins over both this file and
+ * the built-in default, so `-D` and config.h compose freely.
+ *
+ * This template is advisory only — the OS never includes it directly. Upgrading
+ * the OS will never clobber your `os_config.h`; diff this template against your
+ * copy to see any newly-added knobs.
+ */
+#pragma once
+
+/* Each knob is wrapped in `#ifndef` so a compile-line `-D` still wins over
+ * whatever you set here. Uncomment and edit the value to override the OS
+ * default; leave commented to keep the default. */
+
+/* ----- Tick source ------------------------------------------------------- */
+
+/** OS tick frequency in Hz. The platform port uses this to program its tick
+ *  source (e.g. SysTick reload = SystemCoreClock / OS_TICKS_PER_SECOND on
+ *  Cortex-M). Example: 1000 for a 1 ms tick period, 100 for a 10 ms tick. */
+// #ifndef OS_TICKS_PER_SECOND
+// #define OS_TICKS_PER_SECOND 1000
+// #endif
+
+/* ----- Entry pool -------------------------------------------------------- */
+
+/** Maximum simultaneous entries across FIFO + timer queue + bulletin
+ *  board + in-flight pub/sub deliveries. Running out trips
+ *  OS_FAIL_DO_*_ALLOCATION or OS_FAIL_PUT_*_ALLOCATION. */
+// #ifndef OS_MAX_ENTRIES
+// #define OS_MAX_ENTRIES 32
+// #endif
+
+/* ----- Pub/sub ----------------------------------------------------------- */
+
+/** Maximum total subscribers across all topics — one slot per
+ *  (topic, action) pair. Running out trips OS_FAIL_SUBSCRIBE_ALLOCATION. */
+// #ifndef OS_MAX_SUBSCRIPTIONS
+// #define OS_MAX_SUBSCRIPTIONS 8
+// #endif
+
+/* ----- Context pool (ctxAllocPool only) ---------------------------------- */
+/* These knobs apply only when linking against ctxAllocPool. The malloc
+ * allocator ignores them.
+ *
+ * Single-pool config: set the COUNT of the bucket you don't want to 0 and
+ * that bucket's storage is elided at compile time. `SMALL_COUNT=0` gives a
+ * large-pool-only config; `LARGE_COUNT=0` gives a small-pool-only config. */
+
+/** Size (bytes) of each slot in the small-context bucket. Requests of this
+ *  size or less go here. Set to 0 to disable the small bucket. */
+// #ifndef OS_CTX_SMALL_SLOT
+// #define OS_CTX_SMALL_SLOT 16
+// #endif
+
+/** Number of slots in the small-context bucket. */
+// #ifndef OS_CTX_SMALL_COUNT
+// #define OS_CTX_SMALL_COUNT 4
+// #endif
+
+/** Size (bytes) of each slot in the large-context bucket. Requests larger
+ *  than OS_CTX_SMALL_SLOT but no larger than this go here. Anything bigger
+ *  trips OS_FAIL_CONTEXT_ALLOCATION. */
+// #ifndef OS_CTX_LARGE_SLOT
+// #define OS_CTX_LARGE_SLOT 64
+// #endif
+
+/** Number of slots in the large-context bucket. */
+// #ifndef OS_CTX_LARGE_COUNT
+// #define OS_CTX_LARGE_COUNT 4
+// #endif

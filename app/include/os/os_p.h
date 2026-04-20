@@ -1,69 +1,82 @@
 /**
- * @file os.h
+ * @file os_p.h
  * Private header for EventOS (NEVER include this in your app).
  */
+#pragma once
 
-#ifndef _OS_P_H_
-#define _OS_P_H_
-
-#include "os/arm_p.h"
 #include "os/os.h"
+#include <stddef.h>
 #include <stdint.h>
-#include <stdlib.h>
 
-typedef struct
+typedef struct os_ctx_s
 {
+    struct os_ctx_s *next;  // free-list (while free); held-list (while held by an action)
     uint8_t count;
     uint16_t size;
     uint32_t data[];    // Use an uint32_t for alignment here, actual size depends on use
 } os_ctx_t;
 
-typedef struct os_actionEntry_s
+typedef struct os_entry_s
 {
-    struct os_actionEntry_s *next;
+    struct os_entry_s *next;
+    uint32_t ticks;     // 0/unused while on FIFO; delta-encoded ticks while on timer queue
+    uint32_t key;
     os_ctx_t *ctx;
     os_action_t action;
-} os_actionEntry_t;
+} os_entry_t;
 
 typedef struct
 {
-    os_actionEntry_t* os_fifoHead;
-    os_actionEntry_t* os_fifoTail;
+    os_entry_t* os_fifoHead;
+    os_entry_t* os_fifoTail;
 } os_actionFifo_t;
 
 // Add to the tail of the list
-void os_FifoAdd(os_actionEntry_t *fifoEntry);
+void os_FifoAdd(os_entry_t *fifoEntry);
+void os_FifoCancel(uint32_t key);
 // Remove from the head of the list
-os_actionEntry_t *os_FifoRemove(void);
-
-typedef struct os_tqEntry_s
-{
-    struct os_tqEntry_s *next;
-    uint32_t ticks;
-    os_action_t action;
-    os_ctx_t *ctx;
-} os_tqEntry_t;
-
-#define OS_NUMBER_OF_SUBS 4
+os_entry_t *os_FifoRemove(void);
 
 typedef struct os_subscription_s {
     struct os_subscription_s *next;     // Must be first field
     uint32_t topic;
-    os_action_t actions[OS_NUMBER_OF_SUBS];
+    os_action_t action;
 } os_subscription_t;
 
-void os_TimerAdd(os_tqEntry_t *entry);
-void os_TimerInit(arm_SCS_t *system, uint32_t sysTicksPerOsTick);
-void SysTick_Handler(void);
+void os_TimerAdd(os_entry_t *entry);
+void os_TimerInit(void);
+void os_TimerRemove(uint32_t key);
 
 os_ctx_t *os_ContextNew(uint32_t size);
-void os_ContextUse(os_ctx_t *ctx);
-os_ctx_t *os_ContextReuse(os_context_t context);
-os_ctx_t *os_GetCtx(os_context_t context);
+void os_ContextRelease(os_ctx_t *ctx);
+os_ctx_t *os_ContextAcquire(os_context_t context);
 
-// Wrappers, for now...
-void os_MemInit(void);
-void *os_MemAlloc(uint32_t size);
-void os_MemFree(void *mem);
 
+
+// Entry pool — fixed-size slots for FIFO/timer queue entries.
+#ifndef OS_MAX_ENTRIES
+#define OS_MAX_ENTRIES 32
 #endif
+
+void os_EntryAllocInit(void);
+os_entry_t *os_EntryAlloc(void);
+void os_EntryFree(os_entry_t *entry);
+uint32_t os_EntryInUse(void);
+uint32_t os_EntryHighWater(void);
+
+// Subscription pool — fixed-size slots for pub/sub subscriptions.
+#ifndef OS_MAX_SUBSCRIPTIONS
+#define OS_MAX_SUBSCRIPTIONS 8
+#endif
+
+void os_SubAllocInit(void);
+os_subscription_t *os_SubAlloc(void);
+void os_SubFree(os_subscription_t *sub);
+uint32_t os_SubInUse(void);
+uint32_t os_SubHighWater(void);
+
+// Context allocator seam — link-time pluggable.
+// Provided by: ctxAllocMalloc.c (malloc/free), ctxAllocPool.c (two-bucket), or user.
+void os_CtxAllocInit(void);
+os_ctx_t *os_CtxAlloc(uint32_t size);
+void os_CtxFree(os_ctx_t *ctx);
