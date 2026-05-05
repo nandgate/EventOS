@@ -620,6 +620,8 @@ across the FIFO plus the timer queue:
 
 - `os_EntryInUse()` — current live entry count.
 - `os_EntryHighWater()` — running maximum since boot.
+- `os_EntryHighWaterReset()` — clears the high-water mark to zero,
+  starting a fresh measurement window.
 
 Timer-queue entries (including bulletin-board timeouts) aren't
 waiting on the CPU — they're waiting on time — so they don't
@@ -821,6 +823,18 @@ OS_SRCS += .../mem/$(CTX_ALLOC).c
 so only the one implementation you asked for ends up in the link.
 Default is `ctxAllocMalloc`.
 
+*Observability.* `os_CtxInUse(bucket)`, `os_CtxHighWater(bucket)`,
+and `os_CtxHighWaterReset(bucket)` expose live and peak allocation
+per bucket when `ctxAllocPool` is linked, where `bucket` is one of
+`OS_CTX_BUCKET_SMALL` or `OS_CTX_BUCKET_LARGE`. The buckets are
+sized independently (`OS_CTX_SMALL_COUNT` vs `OS_CTX_LARGE_COUNT`)
+and exhaust independently, so the alert threshold is per-bucket;
+sum the two if you want a combined view. With `ctxAllocMalloc` the
+counters return zero for either bucket and the reset is a no-op —
+there is no inherent slot count to measure against, so peak
+allocation has to come from the heap implementation rather than
+from EventOS.
+
 **Entry pool.** An entry is the OS-internal slot that carries an
 action + context + key through the system. The application never
 holds one, but it sets the pool size and reads the occupancy
@@ -834,8 +848,9 @@ consumes one entry. One pool services all callers.
   `OS_FAIL_DO_AFTER_ALLOCATION`, `OS_FAIL_PUT_ALLOCATION`, etc.
   (see `os.h`). `os_Publish` layers on top of `os_Do`, so publish
   failures surface as `OS_FAIL_DO_ALLOCATION`.
-- Observability: `os_EntryInUse()` and `os_EntryHighWater()` are
-  public; §2.6 covers load-metric usage.
+- Observability: `os_EntryInUse()`, `os_EntryHighWater()`, and
+  `os_EntryHighWaterReset()` are public; §2.6 covers load-metric
+  usage.
 
 **Subscription pool.** Fully internal — the application calls
 `os_Subscribe` / `os_Unsubscribe` and never sees a subscription
@@ -845,9 +860,9 @@ cap.
 
 - Sized by `OS_MAX_SUBSCRIPTIONS` (default 8).
 - Allocation failure: `OS_FAIL_SUBSCRIBE_ALLOCATION`.
-- Internal counters `os_SubInUse()` and `os_SubHighWater()` live in
-  the private header; they can be promoted to `os.h` if an
-  application needs the same telemetry the entry pool exposes.
+- Observability: `os_SubInUse()`, `os_SubHighWater()`, and
+  `os_SubHighWaterReset()` are public — same telemetry shape as the
+  entry pool.
 
 ### 3.4 Configuration
 

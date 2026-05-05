@@ -299,11 +299,11 @@ directly via static helpers to transfer entry ownership atomically
 |---|---|---|---|---|
 | **action** | `action/` | `os_Do`, `os_DoWith`, `os_DoAfter`, `os_DoAfterWith`, `os_CancelPending` | — | mem, context, fifo, timer |
 | **bulletinboard** | `bulletinboard/` | `os_Put`, `os_PutWith`, `os_Get` | — | mem, context, action (cancel), fifo/timer (direct list walks in `os_Get`) |
-| **pubsub** | `pubsub/` | `os_Subscribe`, `os_Unsubscribe`, `os_UnsubscribeAll`, `os_Publish`, `os_PublishWith` | `os_SubAlloc`, `os_SubAllocInit`, `os_SubFree`, `os_SubInUse`, `os_SubHighWater` | action (`os_Do` / `os_DoWith` fan-out) |
+| **pubsub** | `pubsub/` | `os_Subscribe`, `os_Unsubscribe`, `os_UnsubscribeAll`, `os_Publish`, `os_PublishWith`, `os_SubInUse`, `os_SubHighWater`, `os_SubHighWaterReset` | `os_SubAlloc`, `os_SubAllocInit`, `os_SubFree` | action (`os_Do` / `os_DoWith` fan-out) |
 | **fifo** | `fifo/` | `os_Exec` | `os_FifoAdd`, `os_FifoRemove`, `os_FifoCancel` | mem, context, weak hooks |
 | **timer** | `timer/` | `os_Tick` | `os_TimerAdd`, `os_TimerRemove`, `os_TimerInit` | fifo (expired promotion), mem, context |
 | **context** | `context/` | — | `os_ContextNew`, `os_ContextAcquire`, `os_ContextRelease` | mem (`os_CtxAlloc` / `os_CtxFree`), `os_Fail` |
-| **mem** | `mem/` | `os_EntryInUse`, `os_EntryHighWater` | `os_EntryAlloc`, `os_EntryAllocInit`, `os_EntryFree`, `os_CtxAlloc`, `os_CtxAllocInit`, `os_CtxFree` | port (`hal_Critical*`) |
+| **mem** | `mem/` | `os_EntryInUse`, `os_EntryHighWater`, `os_EntryHighWaterReset`, `os_CtxInUse`, `os_CtxHighWater`, `os_CtxHighWaterReset` | `os_EntryAlloc`, `os_EntryAllocInit`, `os_EntryFree`, `os_CtxAlloc`, `os_CtxAllocInit`, `os_CtxFree` | port (`hal_Critical*`) |
 | **os** | `os.c` | `os_Init`, `os_NullAction` | (owns shared globals) | every module's `*Init` function |
 | **port** | `examples/<port>/source/` | — | — | target hardware |
 

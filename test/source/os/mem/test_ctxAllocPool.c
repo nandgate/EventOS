@@ -25,8 +25,10 @@ uint32_t    os_ctxSmallPool[OS_CTX_SMALL_COUNT][CTX_SLOT_WORDS(OS_CTX_SMALL_SLOT
 uint32_t    os_ctxLargePool[OS_CTX_LARGE_COUNT][CTX_SLOT_WORDS(OS_CTX_LARGE_SLOT)];
 os_ctx_t   *os_ctxSmallFreeList;
 os_ctx_t   *os_ctxLargeFreeList;
-uint32_t    os_ctxInUseCount;
-uint32_t    os_ctxHighWaterMark;
+uint32_t    os_ctxSmallInUseCount;
+uint32_t    os_ctxLargeInUseCount;
+uint32_t    os_ctxSmallHighWaterMark;
+uint32_t    os_ctxLargeHighWaterMark;
 
 #define TEST_SMALL_SIZE  OS_CTX_SMALL_SLOT
 #define TEST_LARGE_SIZE  (OS_CTX_SMALL_SLOT + 1)
@@ -142,7 +144,8 @@ static void test_InUseCount(void)
     os_CtxAlloc(TEST_SMALL_SIZE);
     os_CtxAlloc(TEST_LARGE_SIZE);
 
-    Assert_Equals(2, os_ctxInUseCount);
+    Assert_Equals(1, os_ctxSmallInUseCount);
+    Assert_Equals(1, os_ctxLargeInUseCount);
 }
 
 static void test_FreeDecrementsInUseCount(void)
@@ -153,10 +156,11 @@ static void test_FreeDecrementsInUseCount(void)
 
     os_CtxFree(s);
 
-    Assert_Equals(1, os_ctxInUseCount);
+    Assert_Equals(0, os_ctxSmallInUseCount);
+    Assert_Equals(1, os_ctxLargeInUseCount);
 }
 
-static void test_HighWaterMark(void)
+static void test_SmallHighWaterMark(void)
 {
     setUp();
     os_CtxAlloc(TEST_SMALL_SIZE);
@@ -164,7 +168,19 @@ static void test_HighWaterMark(void)
     os_CtxAlloc(TEST_SMALL_SIZE);
     os_CtxFree(s2);
 
-    Assert_Equals(3, os_ctxHighWaterMark);
+    Assert_Equals(3, os_ctxSmallHighWaterMark);
+    Assert_Equals(0, os_ctxLargeHighWaterMark);
+}
+
+static void test_LargeHighWaterMark(void)
+{
+    setUp();
+    os_CtxAlloc(TEST_LARGE_SIZE);
+    os_ctx_t *l2 = os_CtxAlloc(TEST_LARGE_SIZE);
+    os_CtxFree(l2);
+
+    Assert_Equals(0, os_ctxSmallHighWaterMark);
+    Assert_Equals(2, os_ctxLargeHighWaterMark);
 }
 
 static void test_AllocWrapsInCriticalSection(void)
@@ -204,7 +220,8 @@ int main(int argc, char **argv)
     test_SmallExhaustion_DoesNotAffectLarge();
     test_InUseCount();
     test_FreeDecrementsInUseCount();
-    test_HighWaterMark();
+    test_SmallHighWaterMark();
+    test_LargeHighWaterMark();
     test_AllocWrapsInCriticalSection();
     test_FreeWrapsInCriticalSection();
 

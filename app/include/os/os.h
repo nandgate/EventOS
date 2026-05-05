@@ -28,7 +28,7 @@
 /**
  * EventOS release version (Semantic Versioning).
  */
-#define OS_VERSION "2.0.0"
+#define OS_VERSION "2.2.0"
 
 #ifndef OS_TICKS_PER_SECOND
 #define OS_TICKS_PER_SECOND 1000
@@ -130,6 +130,57 @@ uint32_t os_EntryInUse(void);
  * peak load and alert as it approaches OS_MAX_ENTRIES.
  */
 uint32_t os_EntryHighWater(void);
+
+/**
+ * Clears the entry high-water mark to zero. Use to begin a fresh measurement window after
+ * sampling os_EntryHighWater().
+ */
+void os_EntryHighWaterReset(void);
+
+/**
+ * Current count of live subscriptions in the subscription pool. Safe to call from any action.
+ */
+uint32_t os_SubInUse(void);
+
+/**
+ * Running maximum of os_SubInUse() since os_Init(). Sample periodically to track peak
+ * subscription usage and alert as it approaches OS_MAX_SUBSCRIPTIONS.
+ */
+uint32_t os_SubHighWater(void);
+
+/**
+ * Clears the subscription high-water mark to zero. Use to begin a fresh measurement window
+ * after sampling os_SubHighWater().
+ */
+void os_SubHighWaterReset(void);
+
+/**
+ * Selects which context-pool bucket the os_Ctx* observability calls inspect. The pool
+ * allocator (`ctxAllocPool`) maintains separate counters for the small and large buckets;
+ * the malloc allocator (`ctxAllocMalloc`) ignores the selector and always returns zero.
+ */
+typedef enum {
+    OS_CTX_BUCKET_SMALL,
+    OS_CTX_BUCKET_LARGE,
+} os_ctxBucket_t;
+
+/**
+ * Current count of live contexts in the selected bucket. Returns zero when the malloc-based
+ * context allocator is linked (no tracking).
+ */
+uint32_t os_CtxInUse(os_ctxBucket_t bucket);
+
+/**
+ * Running maximum of os_CtxInUse(bucket) since os_Init(). Returns zero when the malloc-based
+ * context allocator is linked.
+ */
+uint32_t os_CtxHighWater(os_ctxBucket_t bucket);
+
+/**
+ * Clears the high-water mark for the selected bucket to zero, leaving the other bucket
+ * untouched. No-op when the malloc-based context allocator is linked.
+ */
+void os_CtxHighWaterReset(os_ctxBucket_t bucket);
 
 /** @defgroup Administrative EventOS Administration
  *  Functions for administrating EventOS. These functions are typically called from main().
