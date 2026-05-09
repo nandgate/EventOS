@@ -77,6 +77,21 @@ uint32_t os_SubHighWater(void);
 
 // Context allocator seam — link-time pluggable.
 // Provided by: ctxAllocMalloc.c (malloc/free), ctxAllocPool.c (two-bucket), or user.
+#ifndef OS_CTX_SMALL_SLOT
+#define OS_CTX_SMALL_SLOT  16
+#endif
+#ifndef OS_CTX_SMALL_COUNT
+#define OS_CTX_SMALL_COUNT 4
+#endif
+#ifndef OS_CTX_LARGE_SLOT
+#define OS_CTX_LARGE_SLOT  64
+#endif
+#ifndef OS_CTX_LARGE_COUNT
+#define OS_CTX_LARGE_COUNT 4
+#endif
+
+#define CTX_SLOT_WORDS(bytes) (((bytes) + sizeof(uint32_t) - 1) / sizeof(uint32_t))
+
 void os_CtxAllocInit(void);
 os_ctx_t *os_CtxAlloc(uint32_t size);
 void os_CtxFree(os_ctx_t *ctx);

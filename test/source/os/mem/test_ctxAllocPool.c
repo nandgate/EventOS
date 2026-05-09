@@ -6,29 +6,14 @@ Mock_Vars(16);
 Mock_Void(hal_CriticalBegin);
 Mock_Void(hal_CriticalEnd);
 
-#ifndef OS_CTX_SMALL_SLOT
-#define OS_CTX_SMALL_SLOT  16
-#endif
-#ifndef OS_CTX_SMALL_COUNT
-#define OS_CTX_SMALL_COUNT 4
-#endif
-#ifndef OS_CTX_LARGE_SLOT
-#define OS_CTX_LARGE_SLOT  64
-#endif
-#ifndef OS_CTX_LARGE_COUNT
-#define OS_CTX_LARGE_COUNT 4
-#endif
-
-#define CTX_SLOT_WORDS(bytes) (((bytes) + sizeof(uint32_t) - 1) / sizeof(uint32_t))
-
-uint32_t    os_ctxSmallPool[OS_CTX_SMALL_COUNT][CTX_SLOT_WORDS(OS_CTX_SMALL_SLOT)];
+os_ctx_t   *os_ctxLargeFreeList;
+uint32_t    os_ctxLargeHighWaterMark;
+uint32_t    os_ctxLargeInUseCount;
 uint32_t    os_ctxLargePool[OS_CTX_LARGE_COUNT][CTX_SLOT_WORDS(OS_CTX_LARGE_SLOT)];
 os_ctx_t   *os_ctxSmallFreeList;
-os_ctx_t   *os_ctxLargeFreeList;
-uint32_t    os_ctxSmallInUseCount;
-uint32_t    os_ctxLargeInUseCount;
 uint32_t    os_ctxSmallHighWaterMark;
-uint32_t    os_ctxLargeHighWaterMark;
+uint32_t    os_ctxSmallInUseCount;
+uint32_t    os_ctxSmallPool[OS_CTX_SMALL_COUNT][CTX_SLOT_WORDS(OS_CTX_SMALL_SLOT)];
 
 #define TEST_SMALL_SIZE  OS_CTX_SMALL_SLOT
 #define TEST_LARGE_SIZE  (OS_CTX_SMALL_SLOT + 1)

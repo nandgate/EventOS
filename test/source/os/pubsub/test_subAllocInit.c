@@ -3,10 +3,10 @@
 
 Mock_Vars(3);
 
-os_subscription_t  os_subPool[OS_MAX_SUBSCRIPTIONS];
 os_subscription_t *os_subFreeList;
-uint32_t           os_subInUseCount;
 uint32_t           os_subHighWaterMark;
+uint32_t           os_subInUseCount;
+os_subscription_t  os_subPool[OS_MAX_SUBSCRIPTIONS];
 
 #define TEST_UNSET  0xDEADBEEF
 

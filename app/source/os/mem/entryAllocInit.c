@@ -1,9 +1,9 @@
 #include "os/os_p.h"
 
-os_entry_t  os_entryPool[OS_MAX_ENTRIES];
-os_entry_t *os_entryFreeList;
-uint32_t    os_entryInUseCount;
-uint32_t    os_entryHighWaterMark;
+extern os_entry_t *os_entryFreeList;
+extern uint32_t    os_entryHighWaterMark;
+extern uint32_t    os_entryInUseCount;
+extern os_entry_t  os_entryPool[OS_MAX_ENTRIES];
 
 void os_EntryAllocInit(void)
 {

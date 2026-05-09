@@ -2,29 +2,14 @@
 #include "os/os_p.h"
 #include <stddef.h>
 
-#ifndef OS_CTX_SMALL_SLOT
-#define OS_CTX_SMALL_SLOT  16
-#endif
-#ifndef OS_CTX_SMALL_COUNT
-#define OS_CTX_SMALL_COUNT 4
-#endif
-#ifndef OS_CTX_LARGE_SLOT
-#define OS_CTX_LARGE_SLOT  64
-#endif
-#ifndef OS_CTX_LARGE_COUNT
-#define OS_CTX_LARGE_COUNT 4
-#endif
-
-#define CTX_SLOT_WORDS(bytes) (((bytes) + sizeof(uint32_t) - 1) / sizeof(uint32_t))
-
-uint32_t   os_ctxSmallPool[OS_CTX_SMALL_COUNT][CTX_SLOT_WORDS(OS_CTX_SMALL_SLOT)];
-uint32_t   os_ctxLargePool[OS_CTX_LARGE_COUNT][CTX_SLOT_WORDS(OS_CTX_LARGE_SLOT)];
-os_ctx_t  *os_ctxSmallFreeList;
-os_ctx_t  *os_ctxLargeFreeList;
-uint32_t   os_ctxSmallInUseCount;
-uint32_t   os_ctxLargeInUseCount;
-uint32_t   os_ctxSmallHighWaterMark;
-uint32_t   os_ctxLargeHighWaterMark;
+extern os_ctx_t *os_ctxLargeFreeList;
+extern uint32_t  os_ctxLargeHighWaterMark;
+extern uint32_t  os_ctxLargeInUseCount;
+extern uint32_t  os_ctxLargePool[OS_CTX_LARGE_COUNT][CTX_SLOT_WORDS(OS_CTX_LARGE_SLOT)];
+extern os_ctx_t *os_ctxSmallFreeList;
+extern uint32_t  os_ctxSmallHighWaterMark;
+extern uint32_t  os_ctxSmallInUseCount;
+extern uint32_t  os_ctxSmallPool[OS_CTX_SMALL_COUNT][CTX_SLOT_WORDS(OS_CTX_SMALL_SLOT)];
 
 static void buildFreeList(uint32_t *pool, uint32_t slotWords, uint32_t count, os_ctx_t **head)
 {

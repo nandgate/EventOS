@@ -3,10 +3,10 @@
 
 Mock_Vars(3);
 
+os_entry_t *os_entryFreeList;
+uint32_t    os_entryHighWaterMark;
+uint32_t    os_entryInUseCount;
 os_entry_t  os_entryPool[OS_MAX_ENTRIES];
-extern os_entry_t *os_entryFreeList;
-extern uint32_t    os_entryInUseCount;
-extern uint32_t    os_entryHighWaterMark;
 
 #define TEST_UNSET  0xDEADBEEF
 

@@ -8,10 +8,10 @@ Mock_Void(os_EntryAllocInit);
 Mock_Void(os_SubAllocInit);
 Mock_Void(os_TimerInit);
 
-os_actionFifo_t os_actionFifo;
-os_ctx_t *os_heldCtx;
-os_entry_t *os_tQueue;
-os_subscription_t *os_subscriptions;
+extern os_actionFifo_t    os_actionFifo;
+extern os_ctx_t          *os_heldCtx;
+extern os_subscription_t *os_subscriptions;
+extern os_entry_t        *os_tQueue;
 
 static void setUp(void)
 {

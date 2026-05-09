@@ -1,9 +1,9 @@
 #include "os/os_p.h"
 
-os_subscription_t  os_subPool[OS_MAX_SUBSCRIPTIONS];
-os_subscription_t *os_subFreeList;
-uint32_t           os_subInUseCount;
-uint32_t           os_subHighWaterMark;
+extern os_subscription_t *os_subFreeList;
+extern uint32_t           os_subHighWaterMark;
+extern uint32_t           os_subInUseCount;
+extern os_subscription_t  os_subPool[OS_MAX_SUBSCRIPTIONS];
 
 void os_SubAllocInit(void)
 {
