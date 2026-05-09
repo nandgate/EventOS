@@ -5,7 +5,8 @@ Mock_Vars(3);
 
 #define TEST_CONTEXT_SIZE   42
 
-os_ctx_t test_contextEntry;
+static uint8_t   test_contextBuffer[sizeof(os_ctx_t) + TEST_CONTEXT_SIZE];
+static os_ctx_t *test_contextEntry = (os_ctx_t *)test_contextBuffer;
 
 Mock_Value1(os_ctx_t *, os_CtxAlloc, uint32_t);
 Mock_Void1(os_Fail, os_fail_t);
@@ -16,10 +17,10 @@ static void setUp(void)
     Mock_Reset(os_CtxAlloc);
     Mock_Reset(os_Fail);
 
-    Mock_Returns(os_CtxAlloc, &test_contextEntry);
+    Mock_Returns(os_CtxAlloc, test_contextEntry);
 
-    test_contextEntry.size = 0;
-    test_contextEntry.count = 0;
+    test_contextEntry->size = 0;
+    test_contextEntry->count = 0;
 }
 
 static void test_NoContextReturnsNull(void)
@@ -38,7 +39,7 @@ static void test_ReturnsAllocatedContext(void)
 
     os_ctx_t *result = os_ContextNew(TEST_CONTEXT_SIZE);
 
-    Assert_Equals(&test_contextEntry, result);
+    Assert_Equals(test_contextEntry, result);
     Assert_Equals(1, result->count);
     Assert_Equals(TEST_CONTEXT_SIZE, result->size);
 }
